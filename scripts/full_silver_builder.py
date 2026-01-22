@@ -107,7 +107,13 @@ def main():
         ds = open_month(nc_files)
         dfm = month_to_polars(ds)
 
-        print("  rows:", dfm.height, "range:", dfm.select(pl.min("ts_utc"), pl.max("ts_utc")).row(0))
+        rng = dfm.select([
+            pl.col("ts_utc").min().alias("min_ts"),
+            pl.col("ts_utc").max().alias("max_ts"),
+        ]).row(0)
+
+        print("  rows:", dfm.height, "range:", rng)
+
         frames.append(dfm)
 
     df = pl.concat(frames).sort("ts_utc")
@@ -117,7 +123,7 @@ def main():
     nulls = df.select(pl.all().null_count()).row(0)
     print("\nFULL YEAR")
     print("rows:", df.height)
-    print("range:", df.select(pl.min("ts_utc"), pl.max("ts_utc")).row(0))
+    print("range:", df.select([pl.col("ts_utc").min().alias("min_ts"), pl.col("ts_utc").max().alias("max_ts")]))
     print("duplicates:", dupes)
     print("null_counts:", dict(zip(df.columns, nulls)))
 
