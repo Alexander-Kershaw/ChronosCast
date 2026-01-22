@@ -56,10 +56,34 @@ half_hour = (
 )
 
 # Resample to hourly mean
-hourly = (
+hourly_raw = (
     half_hour
     .group_by_dynamic("ts_utc", every="1h", closed="left", label="left")
     .agg(pl.col("demand_mw").mean().alias("demand_mw"))
+    .sort("ts_utc")
+)
+
+# Build hourly time spine
+min_ts, max_ts = (
+    hourly_raw
+    .select([
+        pl.col("ts_utc").min().alias("min_ts"),
+        pl.col("ts_utc").max().alias("max_ts"),
+    ])
+    .row(0)
+)
+
+spine = pl.datetime_range(
+    start=min_ts,
+    end=max_ts,
+    interval="1h",
+    eager=True,
+).to_frame("ts_utc")
+
+
+# Patched hourly silver data with time spine
+hourly = (
+    spine.join(hourly_raw, on="ts_utc", how="left")
     .sort("ts_utc")
 )
 
@@ -74,15 +98,6 @@ diffs = (
 bad_steps = diffs.filter(pl.col("dt") != pl.duration(hours=1)).height
 nulls = hourly.select(pl.col("demand_mw").is_null().sum()).item()
 
-min_ts, max_ts = (
-    hourly
-    .select([
-        pl.col("ts_utc").min().alias("min_ts"),
-        pl.col("ts_utc").max().alias("max_ts"),
-    ])
-    .row(0)
-)
-
 print("Half-hour rows:", half_hour.height)
 print("Hourly rows:", hourly.height)
 print("Range:", (min_ts, max_ts))
@@ -92,3 +107,9 @@ print("Null demand count:", nulls)
 
 hourly.write_parquet(OUT_PATH)
 print("Wrote:", OUT_PATH)
+
+# if there are any nulls shows where they are
+if nulls:
+    print("\nNull-hour timestamps (first 10):")
+    print(hourly.filter(pl.col("demand_mw").is_null()).select("ts_utc").head(10))
+
