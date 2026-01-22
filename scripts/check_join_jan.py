@@ -5,10 +5,14 @@ from datetime import datetime
 demand = (
     pl.read_parquet("data_lake/silver/demand_uk_hourly.parquet")
     .select(["ts_utc", "demand_mw"])
+    .with_columns(pl.col("ts_utc").cast(pl.Datetime("us")))
 )
 
 # UK weather data
-weather = pl.read_parquet("data_lake/silver/weather_uk_hourly_2023_01.parquet")
+weather = (
+    pl.read_parquet("data_lake/silver/weather_uk_hourly_2023_01.parquet")
+    .with_columns(pl.col("ts_utc").cast(pl.Datetime("us")))
+)
 
 start = datetime(2023, 1, 1, 0, 0, 0)
 end   = datetime(2023, 2, 1, 0, 0, 0)
