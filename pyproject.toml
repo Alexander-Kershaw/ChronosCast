@@ -5,23 +5,48 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "chronoscast"
 version = "0.1.0"
-description = "UK electricity demand forecasting with a weather feature store"
+description = "UK electricity demand forecasting + ERA5 weather feature store + leakage-safe backtesting"
 readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Alex Kershaw" }
+]
 dependencies = [
-  "polars>=1.0.0",
-  "pyarrow>=14.0.0",
-  "duckdb>=1.0.0",
-  "requests>=2.31.0",
-  "matplotlib>=3.8.0",
-  "scikit-learn>=1.3.0",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "polars>=1.0",
+  "pyarrow>=16.0",
+  "duckdb>=1.0",
+
+  "requests>=2.31",
+  "tqdm>=4.66",
+
   "cdsapi>=0.7.7",
   "xarray>=2024.1.0",
   "netCDF4>=1.6.5",
+
+  "scikit-learn>=1.4",
+  "lightgbm>=4.3",
+  "xgboost>=2.0",
+
+  "matplotlib>=3.8",
+  "shap>=0.45",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "ruff>=0.5.0",
-  "pytest>=8.0.0",
+  "pytest>=8.0",
+  "ruff>=0.5",
+  "black>=24.0",
 ]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I"]
+ignore = ["E501"]

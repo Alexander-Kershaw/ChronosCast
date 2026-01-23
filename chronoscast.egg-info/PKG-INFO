@@ -1,18 +1,27 @@
 Metadata-Version: 2.4
 Name: chronoscast
 Version: 0.1.0
-Summary: UK electricity demand forecasting with a weather feature store
+Summary: UK electricity demand forecasting + ERA5 weather feature store + leakage-safe backtesting
+Author: Alex Kershaw
+License: MIT
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
-Requires-Dist: polars>=1.0.0
-Requires-Dist: pyarrow>=14.0.0
-Requires-Dist: duckdb>=1.0.0
-Requires-Dist: requests>=2.31.0
-Requires-Dist: matplotlib>=3.8.0
-Requires-Dist: scikit-learn>=1.3.0
+Requires-Dist: numpy>=1.26
+Requires-Dist: pandas>=2.2
+Requires-Dist: polars>=1.0
+Requires-Dist: pyarrow>=16.0
+Requires-Dist: duckdb>=1.0
+Requires-Dist: requests>=2.31
+Requires-Dist: tqdm>=4.66
 Requires-Dist: cdsapi>=0.7.7
 Requires-Dist: xarray>=2024.1.0
 Requires-Dist: netCDF4>=1.6.5
+Requires-Dist: scikit-learn>=1.4
+Requires-Dist: lightgbm>=4.3
+Requires-Dist: xgboost>=2.0
+Requires-Dist: matplotlib>=3.8
+Requires-Dist: shap>=0.45
 Provides-Extra: dev
-Requires-Dist: ruff>=0.5.0; extra == "dev"
-Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: ruff>=0.5; extra == "dev"
+Requires-Dist: black>=24.0; extra == "dev"
